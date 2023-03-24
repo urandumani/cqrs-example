@@ -1,0 +1,44 @@
+version: "3.7"
+services:
+  app:
+    build: .
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - mongo-docker
+      - axonserver
+    networks:
+      - cqrs-demo
+  mongo-docker:
+    image: "mongo:4.4.3"
+    restart: always
+    ports:
+      - 27017:27017
+  axonserver:
+    image: axoniq/axonserver:latest-dev
+    hostname: axonserver
+    volumes:
+      - type: bind
+        source: ./data
+        target: /axonserver/data
+      - type: bind
+        source: ./events
+        target: /axonserver/events
+      - type: bind
+        source: ./plugins
+        target: /axonserver/plugins
+      - type: bind
+        source: ./config
+        target: /config
+        read_only: true
+    ports:
+      - '8024:8024'
+      - '8124:8124'
+      - '8224:8224'
+    networks:
+      - cqrs-demo
+
+networks:
+  cqrs-demo:
+    driver: bridge
