@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import com.example.cqrs.query.model.BankAccount;
 import com.example.cqrs.query.model.Customer;
+import com.example.cqrs.query.model.Transaction;
 import com.example.cqrs.query.repository.CustomerQueryRepository;
 import com.example.cqrs.shared.event.BankAccountCreatedEvent;
 import com.example.cqrs.shared.event.CustomerCreatedEvent;
@@ -44,6 +45,7 @@ public class CustomerEventHandler {
 		customerQueryRepository.findById(event.getCustomerId())
 				.ifPresentOrElse(order -> {
 					order.getBankAccounts().putIfAbsent(event.getId(), BankAccount.builder()
+							.id(event.getId())
 							.balance(event.getInitialDeposit())
 							.overdraftLimit(event.getOverdraftLimit())
 							.build());
@@ -57,7 +59,12 @@ public class CustomerEventHandler {
 		customerQueryRepository.findById(event.getCustomerId())
 				.ifPresentOrElse(order -> {
 							var bankAccount = order.getBankAccounts().get(event.getAccountId());
-							bankAccount.setBalance(event.getAmount());
+							bankAccount.setBalance(event.getCalculatedBalance());
+							bankAccount.getTransactions().add(Transaction.builder()
+									.amount(event.getAmount())
+									.paymentType(event.getPaymentType())
+									.date(event.getDate())
+									.build());
 							customerQueryRepository.save(order);
 						},
 						() -> log.warn("Won't create BankAccount. Customer is not present: {}", event.getCustomerId()));

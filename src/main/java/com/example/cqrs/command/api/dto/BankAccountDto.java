@@ -1,5 +1,6 @@
 package com.example.cqrs.command.api.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +13,9 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BankAccountDto {
+
+	@NotNull(message = "Initial deposit cannot be null")
 	private BigDecimal initialDeposit;
+	@NotNull(message = "Overdraft limit cannot be null")
 	private BigDecimal overdraftLimit;
 }

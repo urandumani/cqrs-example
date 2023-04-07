@@ -26,6 +26,7 @@ import org.axonframework.spring.stereotype.Aggregate;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Slf4j
@@ -58,6 +59,7 @@ public class CustomerAggregate {
 
 	@CommandHandler
 	public void handle(UpdateCustomerCommand command) {
+		log.info("Handling command {}", command);
 		apply(CustomerUpdatedEvent.builder()
 				.name(command.getName())
 				.id(command.getId())
@@ -72,7 +74,7 @@ public class CustomerAggregate {
 
 	@CommandHandler
 	public void handle(CreateBankAccountCommand command) {
-		log.info("handling CreateBankAccountCommand");
+		log.info("Handling command {}", command);
 		apply(BankAccountCreatedEvent.builder()
 				.id(command.getId())
 				.customerId(command.getCustomerId())
@@ -83,7 +85,7 @@ public class CustomerAggregate {
 
 	@CommandHandler
 	public void on(PaymentCommand command) {
-		log.info("handling PaymentCommand");
+		log.info("Handling command {}", command);
 		BankAccount account = findItem(command.getAccountId()).orElseThrow(
 				() -> new AggregateNotFoundException(command.getAccountId(), "Cannot find BankAccount"));
 		BigDecimal calculatedBalance = command.getPaymentType().equals(PaymentType.DEBIT) ?
@@ -92,8 +94,10 @@ public class CustomerAggregate {
 		apply(PaymentEvent.builder()
 				.accountId(command.getAccountId())
 				.customerId(command.getCustomerId())
-				.amount(calculatedBalance)
+				.calculatedBalance(calculatedBalance)
+				.amount(command.getAmount())
 				.paymentType(command.getPaymentType())
+				.date(LocalDate.now())
 				.build());
 	}
 

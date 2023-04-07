@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder
@@ -16,4 +18,5 @@ public class BankAccount {
 	private String id;
 	private BigDecimal balance;
 	private BigDecimal overdraftLimit;
+	private List<Transaction> transactions = new ArrayList<>();
 }

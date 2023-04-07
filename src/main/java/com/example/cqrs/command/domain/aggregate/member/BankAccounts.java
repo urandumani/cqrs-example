@@ -36,6 +36,6 @@ public class BankAccounts {
 		items.stream()
 				.filter(e -> e.getId().equals(paymentEvent.getAccountId()))
 				.findFirst()
-				.ifPresent(item -> item.setBalance(paymentEvent.getAmount()));
+				.ifPresent(item -> item.setBalance(paymentEvent.getCalculatedBalance()));
 	}
 }

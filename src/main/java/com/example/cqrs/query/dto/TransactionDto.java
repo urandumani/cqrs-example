@@ -1,7 +1,9 @@
-package com.example.cqrs.shared.event;
+package com.example.cqrs.query.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import com.example.cqrs.shared.PaymentType;
 
@@ -10,12 +12,11 @@ import java.time.LocalDate;
 
 @Data
 @Builder
-public class PaymentEvent {
+@AllArgsConstructor
+@NoArgsConstructor
+public class TransactionDto {
 
-	private String accountId;
-	private String customerId;
 	private BigDecimal amount;
-	private BigDecimal calculatedBalance;
 	private PaymentType paymentType;
 	private LocalDate date;
 }
